@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestor de Tareas</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <script>
+    const apiUrl = "http://localhost:3000/api/tasks";
+
+    // Obtener todas las tareas
+    function obtenerTareas() {
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(tareas => {
+          const listaTareas = document.getElementById('listaTareas');
+          listaTareas.innerHTML = '';
+
+          tareas.forEach(tarea => {
+            const tareaRow = `
+              <tr>
+                <td>${tarea.title}</td>
+                <td>${tarea.detail}</td>
+                <td>
+                  <button class="btn btn-danger btn-sm" onclick="eliminarTarea('${tarea._id}')">Eliminar</button>
+                </td>
+              </tr>
+            `;
+            listaTareas.innerHTML += tareaRow;
+          });
+        })
+        .catch(console.error);
+    }
+
+    // Crear una nueva tarea
+    function crearTarea(e) {
+      e.preventDefault();
+      const titulo = document.getElementById('tituloTarea').value;
+      const detalle = document.getElementById('detalleTarea').value;
+
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: titulo, detail: detalle })
+      })
+        .then(response => response.json())
+        .then(() => {
+          alert('Tarea creada con éxito');
+          obtenerTareas();
+          document.getElementById('formTarea').reset();
+        })
+        .catch(console.error);
+    }
+
+    // Eliminar una tarea
+    function eliminarTarea(idTarea) {
+      fetch(`${apiUrl}?id=${idTarea}`, {
+        method: 'DELETE'
+      })
+        .then(() => {
+          alert('Tarea eliminada');
+          obtenerTareas();
+        })
+        .catch(console.error);
+    }
+
+    window.onload = obtenerTareas;
+  </script>
+</head>
+
+<body class="bg-light">
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">Gestor de Tareas</h1>
+
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h4>Crear una Nueva Tarea</h4>
+      </div>
+      <div class="card-body">
+        <form id="formTarea" onsubmit="crearTarea(event)">
+          <div class="mb-3">
+            <label for="tituloTarea" class="form-label">Título</label>
+            <input type="text" id="tituloTarea" class="form-control" placeholder="Ingresa el título de la tarea" required>
+          </div>
+          <div class="mb-3">
+            <label for="detalleTarea" class="form-label">Detalle</label>
+            <input type="text" id="detalleTarea" class="form-control" placeholder="Ingresa el detalle de la tarea" required>
+          </div>
+          <button type="submit" class="btn btn-success">Crear Tarea</button>
+        </form>
+      </div>
+    </div>
+
+    <h2>Lista de Tareas</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Detalle</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="listaTareas"></tbody>
+    </table>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
