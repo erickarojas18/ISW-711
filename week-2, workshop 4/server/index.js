@@ -1,69 +1,47 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-
 const app = express();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-// Conectar a MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/cursos-api", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+// Conexión a la base de datos
+mongoose.connect("mongodb+srv://erickaborge13:quhVilO9WAVZxyqs@cluster0.svymq.mongodb.net/teachers", { 
+  useNewUrlParser: true, 
+  useUnifiedTopology: true 
+})
+  .then(() => {
+    console.log('Conectado a MongoDB');
+  })
+  .catch((err) => {
+    console.log('Error al conectar a MongoDB:', err);
+  });
 
-const db = mongoose.connection;
-db.on("connected", () => console.log("Conexión exitosa a MongoDB"));
-db.on("error", (err) => console.error("Error al conectar con MongoDB:", err));
-
-// Middlewares
-app.use(cors());
+// Procesar el cuerpo de la solicitud
 app.use(bodyParser.json());
 
-// Modelos
-const Profesor = mongoose.model('Profesor', new mongoose.Schema({
-  nombre: String
+// Verificación de CORS
+app.use(cors({
+  origin: '*', // Permite solicitudes desde cualquier origen
+  methods: "*", // Permite todos los métodos HTTP
 }));
 
-const Curso = mongoose.model('Curso', new mongoose.Schema({
-  nombre: String,
-  codigo: String,
-  descripcion: String,
-  profesor: { type: mongoose.Schema.Types.ObjectId, ref: 'Profesor' }
-}));
+// Importar controladores
+const { teacherCreate, teacherGet, teacherGetById, teacherUpdate, teacherDelete } = require('./controllers/teacherController');
+const { courseCreate, courseGet, courseGetById, courseUpdate, courseDelete } = require('./controllers/courseController'); // Asegúrate de tener este controlador
 
-// Rutas para cursos
-app.get('/api/cursos', async (req, res) => {
-  const cursos = await Curso.find().populate('profesor');
-  res.json(cursos);
-});
+// Rutas de los profesores
+app.post('/api/teachers', teacherCreate); // Crear profesor
+app.get("/api/teachers", teacherGet); // Obtener todos los profesores
+app.get("/api/teachers/:id", teacherGetById); // Obtener profesor por ID
+app.put("/api/teachers/:id", teacherUpdate); // Actualizar profesor
+app.delete("/api/teachers/:id", teacherDelete); // Eliminar profesor
 
-app.post('/api/cursos', async (req, res) => {
-  const nuevoCurso = new Curso(req.body);
-  await nuevoCurso.save();
-  res.status(201).json(nuevoCurso);
-});
+// Rutas de los cursos
+app.post('/api/courses', courseCreate); // Crear curso
+app.get("/api/courses", courseGet); // Obtener todos los cursos
+app.get("/api/courses/:id", courseGetById); // Obtener curso por ID
+app.put("/api/courses/:id", courseUpdate); // Actualizar curso
+app.delete("/api/courses/:id", courseDelete); // Eliminar curso
 
-app.put('/api/cursos/:id', async (req, res) => {
-  const cursoActualizado = await Curso.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(cursoActualizado);
-});
-
-app.delete('/api/cursos/:id', async (req, res) => {
-  await Curso.findByIdAndDelete(req.params.id);
-  res.status(204).send();
-});
-
-// Rutas para profesores
-app.get('/api/profesores', async (req, res) => {
-  const profesores = await Profesor.find();
-  res.json(profesores);
-});
-
-app.post('/api/profesores', async (req, res) => {
-  const nuevoProfesor = new Profesor(req.body);
-  await nuevoProfesor.save();
-  res.status(201).json(nuevoProfesor);
-});
-
-// Iniciar servidor
-app.listen(3000, () => console.log("Servidor ejecutándose en el puerto 3000"));
+// Iniciar el servidor
+app.listen(3001, () => console.log('Servidor corriendo en el puerto 3000!'));
