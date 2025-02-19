@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Cursos - Profesores</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">Gestión de Cursos - Profesores</h1>
+    
+    <!-- Formulario para crear curso -->
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">Crear un Nuevo Curso</div>
+      <div class="card-body">
+        <form id="formCurso">
+          <div class="mb-3">
+            <label class="form-label">Nombre del Curso</label>
+            <input type="text" id="nombreCurso" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Código</label>
+            <input type="text" id="codigoCurso" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <input type="text" id="descripcionCurso" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Profesor</label>
+            <select id="profesorCurso" class="form-select" required></select>
+          </div>
+          <button type="submit" class="btn btn-success">Crear Curso</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Lista de cursos -->
+    <h2>Lista de Cursos</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Código</th>
+          <th>Descripción</th>
+          <th>Profesor</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="listaCursos"></tbody>
+    </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="profesores.js"></script>
+</body>
+</html>
