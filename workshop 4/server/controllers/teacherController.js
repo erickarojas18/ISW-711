@@ -4,36 +4,24 @@ const Teacher = require("../models/teacherModel");
  * Crear un profesor
  */
 const teacherCreate = (req, res) => {
-  let teacher = new Teacher();
-  teacher.first_name = req.body.first_name;
-  teacher.last_name = req.body.last_name;
-  teacher.age = req.body.age;
-  teacher.cedula = req.body.cedula;
+  console.log("Solicitud POST recibida en /api/teachers");
+  console.log("Body recibido:", req.body); // <---- Verifica que se imprimen los datos aquí
 
-  if (teacher.first_name && teacher.last_name) {
-    teacher.save()
-      .then(() => {
-        res.status(201); // CREATED
-        res.header({
-          'location': `/teachers/?id=${teacher.id}`
-        });
-        res.json(teacher);
-      })
-      .catch((err) => {
-        res.status(422);
-        console.log('error while saving the teacher', err);
-        res.json({
-          error: 'There was an error saving the teacher'
-        });
-      });
-  } else {
-    res.status(422);
-    console.log('error while saving the teacher')
-    res.json({
-      error: 'No valid data provided for teacher'
+  let teacher = new Teacher(req.body);
+
+  teacher.save()
+    .then(() => {
+      res.status(201);
+      res.header({ 'location': `/teachers/?id=${teacher.id}` });
+      res.json(teacher);
+    })
+    .catch((err) => {
+      res.status(422);
+      console.log('Error al guardar el profesor', err);
+      res.json({ error: 'Error al guardar el profesor' });
     });
-  }
 };
+
 
 /**
  * Obtener todos los profesores

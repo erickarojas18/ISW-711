@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+app.use(express.json());
 const cors = require('cors');
 
 // Conexión a la base de datos
@@ -27,7 +27,8 @@ app.use(cors({
 
 // Importar controladores
 const { teacherCreate, teacherGet, teacherGetById, teacherUpdate, teacherDelete } = require('./controllers/teacherController');
-const { courseCreate, courseGet, courseGetById, courseUpdate, courseDelete } = require('./controllers/courseController'); // Asegúrate de tener este controlador
+const { courseCreate, courseGet, courseGetById, courseUpdate, courseDelete } = require('./controllers/courseController');
+console.log("Servidor iniciado y escuchando peticiones...");
 
 // Rutas de los profesores
 app.post('/api/teachers', teacherCreate); // Crear profesor
@@ -44,4 +45,4 @@ app.put("/api/courses/:id", courseUpdate); // Actualizar curso
 app.delete("/api/courses/:id", courseDelete); // Eliminar curso
 
 // Iniciar el servidor
-app.listen(3001, () => console.log('Servidor corriendo en el puerto 3000!'));
+app.listen(3000, () => console.log('Servidor corriendo en el puerto 3000!'));
